@@ -41,7 +41,7 @@ Backend **tidak menggunakan database** — seluruh data dibaca dari file JSON di
 | Test runner | Vitest (`globals: true`) |
 | Lint | oxlint (type-aware) |
 | Formatter | Prettier |
-| Dependency terpasang | `@nestjs/jwt`, `@nestjs/common/core`, `dayjs`, `class-validator`, `class-transformer`, `reflect-metadata`, `rxjs` |
+| Dependency terpasang | `@nestjs/jwt`, `@nestjs/config`, `@nestjs/common/core`, `dayjs`, `class-validator`, `class-transformer`, `reflect-metadata`, `rxjs` |
 
 **Kebijakan dependency:** **DILARANG menambah dependency baru** tanpa izin eksplisit.
 Gunakan yang sudah terpasang. Jika terpaksa, jelaskan alasannya lebih dulu.

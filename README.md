@@ -59,19 +59,28 @@ Server berjalan di `http://localhost:3001` dan seluruh endpoint berawalan `/api`
 
 ## Variabel Environment
 
-Repo tidak menyertakan file `.env` (di-`.gitignore`). Semua variabel bersifat opsional untuk
-development; `JWT_SECRET` **wajib** diatur di produksi.
+Konfigurasi dimuat dari file `.env` melalui `@nestjs/config` (`ConfigModule.forRoot`, global).
+
+```bash
+cp .env.example .env   # lalu isi nilainya
+```
+
+File `.env` **tidak** di-commit (ada di `.gitignore`); `.env.example` berisi placeholder sebagai
+acuan. **Tidak ada secret yang di-hardcode** — bila `JWT_SECRET` kosong, aplikasi gagal start
+(fail-fast).
 
 | Variabel | Wajib | Default | Keterangan |
 |---|---|---|---|
 | `PORT` | Tidak | `3001` | Port HTTP server. |
-| `JWT_SECRET` | Produksi | konstanta dev (fallback) | Secret penandatangan/verifikasi JWT. Wajib di produksi. |
+| `JWT_SECRET` | **Ya** | — (fail-fast) | Secret penandatangan/verifikasi JWT. |
 | `JWT_EXPIRES_IN` | Tidak | `1d` | Masa berlaku access token. |
 
-Contoh:
+Contoh `.env`:
 
 ```bash
-PORT=3001 JWT_SECRET=rahasia-produksi JWT_EXPIRES_IN=1d pnpm start:prod
+PORT=3001
+JWT_SECRET=rahasia-produksi
+JWT_EXPIRES_IN=1d
 ```
 
 ---
@@ -175,3 +184,4 @@ Peta lengkap dan aturan kerja: lihat `AGENTS.md`.
 | Versi | Tanggal | Perubahan |
 |---|---|---|
 | 1.0 | 2026-10-11 | Ditulis ulang dari boilerplate NestJS: setup & running, variabel environment, keputusan teknis, roadmap, catatan pemeliharaan. |
+| 1.1 | 2026-10-11 | Env dimuat via `@nestjs/config` dari `.env`/`.env.example`; `JWT_SECRET` tidak di-hardcode (fail-fast). |
