@@ -57,7 +57,7 @@ src/
 │   ├── filters/       # HttpExceptionFilter (respon error seragam)
 │   ├── guards/        # JwtAuthGuard
 │   └── utils/         # util tanggal (wrapper dayjs)
-├── mock-data/         # MockDataService: baca 3 JSON dari mocks/ saat bootstrap
+├── mock-data/         # MockDataService + mock-data.types.ts: baca 3 JSON dari mocks/ saat bootstrap
 ├── modules/
 │   ├── auth/          # POST /api/auth/login
 │   ├── pilot/         # GET /api/pilot/me
