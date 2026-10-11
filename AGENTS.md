@@ -25,6 +25,7 @@ Backend **tidak menggunakan database** — seluruh data dibaca dari file JSON di
 |---|---|---|
 | `docs/BRIEF.md` | Spesifikasi teknis asli (domain, aturan, endpoint) | Sebelum memahami domain/endpoint |
 | `docs/PRD.md` | Kontrak API, acceptance criteria, decision log | Acuan implementasi harian |
+| `API.md` | Spesifikasi & cara pakai API (endpoint, params, sampel sukses/error) | Konsumen API & onboarding |
 | `AGENTS.md` | Kebijakan repo, aturan kode, alur kerja (dokumen ini) | Sebelum menulis/mengubah/menghapus apa pun |
 | `README.md` | Cara pakai repo (masih boilerplate NestJS, perlu ditulis ulang) | Onboarding |
 | `.agents/skills/*` | Skill agent: `nestjs-best-practices`, `prd-generator` | Saat menulis NestJS / menyusun PRD |
