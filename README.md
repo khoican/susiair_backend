@@ -90,6 +90,8 @@ JWT_EXPIRES_IN=1d
 Semua endpoint dilindungi **JWT** (header `Authorization: Bearer <token>`), kecuali login.
 Prefix global: `/api`.
 
+Dokumentasi interaktif (OpenAPI/Swagger): `http://localhost:3001/api/docs` (spec JSON di `/api/docs-json`).
+
 | Method | Path | Auth | Keterangan |
 |---|---|---|---|
 | POST | `/api/auth/login` | Publik | Login, menerbitkan access token |
@@ -188,3 +190,4 @@ Peta lengkap dan aturan kerja: lihat `AGENTS.md`.
 | 1.2 | 2026-10-11 | Implementasi API: auth (login JWT), pilot, flight-hours (list + summary rolling sum), documents (badge urgensi), schedules (filter bulan) — semua terproteksi JWT respons dibungkus interceptor. |
 | 1.3 | 2026-10-11 | Setup aplikasi dipindah ke `src/app.setup.ts` (`configureApp` dipakai main.ts & e2e); boilerplate `app.controller/service` & `GET /` (Hello World) dihapus; e2e penuh 16 kasus + test hash immutability mocks. |
 | 1.4 | 2026-10-11 | Tambah `API.md`: spesifikasi & cara pakai seluruh endpoint (params, sampel sukses/error). |
+| 1.5 | 2026-10-11 | Dokumentasi interaktif via `@nestjs/swagger` di `/api/docs` (dekorator `@ApiProperty` manual); `pnpm-workspace.yaml` (`allowBuilds` `@scarf/scarf`). |

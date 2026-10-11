@@ -7,6 +7,7 @@ ada di `docs/PRD.md`; dokumen ini ringkasan cara pakai + sampel response.
 
 - Base URL: `http://localhost:3001` (port bisa diubah via env `PORT`).
 - Prefix global: `/api` → semua endpoint dipanggil sebagai `/api/<path>`.
+- Dokumentasi interaktif (OpenAPI/Swagger): `http://localhost:3001/api/docs`, spec JSON di `/api/docs-json`.
 - Format respons **sukses** dibungkus interceptor:
 
   ```json

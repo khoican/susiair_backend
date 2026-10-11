@@ -264,10 +264,12 @@ Sebagai pilot, saya ingin melihat jadwal duty per bulan beserta legend.
 | D4 | `status` field | Dikembalikan apa adanya dari mock | Tidak ada aturan transformasi. |
 | D5 | Override `today` dokumen | `mock-documents.json` `today:"2026-05-31"` diabaikan → anchor `2026-05-15` | BRIEF §2 + aturan immutable mocks. |
 | D6 | Filter `mock-flight-hours` | Data `> 2026-05-15` di-nol-kan saat runtime (data ada sampai `2026-05-31`) | Masa depan = `0.0`; file mock tidak disentuh. |
-| D7 | JWT | Secret `process.env.JWT_SECRET ?? <konstanta dev>`, expiry `1d` | Tidak dispesifikasikan BRIEF. `ponytail:` konstanta dev — ganti dengan secret env wajib di produksi. |
+| D7 | JWT | `JWT_SECRET` dari env (fail-fast `error` bila kosong); expiry `JWT_EXPIRES_IN ?? '1d'` | Tidak ada secret dev; keamanan dasar. |
 | D8 | Port | `process.env.PORT ?? 3001` | BRIEF §5; kode starter masih 3000 → disesuaikan. |
 | D9 | Prefix | `/api` | BRIEF §5 `setGlobalPrefix('api')`. |
 | D10 | `avatarUrl` | Konstanta default profile | Tidak ada di mock; contoh BRIEF dipakai. |
+| D11 | Setup app | `configureApp(app)` di `src/app.setup.ts` dipakai `main.ts` & e2e | Hindari drift konfigurasi global antara runtime dan test. |
+| D12 | Dokumentasi interaktif | Swagger/OpenAPI via `@nestjs/swagger` di `/api/docs`; dekorator `@ApiProperty` manual | Kebutuhan user; tanpa CLI plugin agar eksplisit. |
 
 ---
 

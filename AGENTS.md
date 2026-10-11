@@ -42,7 +42,7 @@ Backend **tidak menggunakan database** — seluruh data dibaca dari file JSON di
 | Test runner | Vitest (`globals: true`) |
 | Lint | oxlint (type-aware) |
 | Formatter | Prettier |
-| Dependency terpasang | `@nestjs/jwt`, `@nestjs/config`, `@nestjs/common/core`, `dayjs`, `class-validator`, `class-transformer`, `reflect-metadata`, `rxjs` |
+| Dependency terpasang | `@nestjs/jwt`, `@nestjs/config`, `@nestjs/common/core`, `@nestjs/swagger`, `dayjs`, `class-validator`, `class-transformer`, `reflect-metadata`, `rxjs` |
 
 **Kebijakan dependency:** **DILARANG menambah dependency baru** tanpa izin eksplisit.
 Gunakan yang sudah terpasang. Jika terpaksa, jelaskan alasannya lebih dulu.
@@ -265,5 +265,6 @@ yang merupakan permintaan eksplisit sehingga sah sebagai pengecualian aturan def
 
 | Versi | Tanggal | Perubahan |
 |---|---|---|
+| 1.2 | 2026-10-11 | Dokumentasi interaktif Swagger (`@nestjs/swagger` @ `/api/docs`, `@ApiProperty` manual); `pnpm-workspace.yaml` (`allowBuilds` untuk `@scarf/scarf`); decision log PRD D7-D12 disinkronkan. |
 | 1.1 | 2026-10-11 | Setup aplikasi dipindah ke `src/app.setup.ts` (dipakai main.ts & e2e); boilerplate `app.controller/service` dihapus; e2e penuh (16 kasus) + test hash immutability mocks. |
 | 1.0 | 2026-10-11 | Dokumen awal: overview repo, peta dokumen, stack, aturan kode (ESM, JSDoc, no komentar tak perlu, no dep baru), aturan file, immutable, alur kerja, pemeliharaan dokumentasi, penegakan. |
