@@ -66,6 +66,7 @@ src/
 │   ├── documents/     # GET /api/documents
 │   └── schedules/     # GET /api/schedules
 ├── app.module.ts
+├── app.setup.ts       # configureApp: prefix, pipes, filter, interceptor (dipakai main.ts & e2e)
 └── main.ts
 mocks/                 # sumber data JSON (READ-ONLY)
 test/                  # e2e (vitest)
@@ -238,7 +239,7 @@ Jalankan urutan ini; berhenti di langkah pertama yang memenuhi:
 | ESM import suffix `.js` | `pnpm build` (`nodenext`) | otomatis |
 | Format kode | `pnpm format` (Prettier) | otomatis |
 | Non-trivial logic ada test | `pnpm test` (Vitest) + review | otomatis/manual |
-| `mocks/**` immutable | test hash mocks (lihat `test/`) | otomatis (setelah test dibuat) |
+| `mocks/**` immutable | test hash mocks (`test/mocks-immutable.spec.ts`) | otomatis |
 | Dilarang komentar tak perlu | review | manual |
 | JSDoc di function publik | review (+ opsional plugin oxlint jsdoc) | manual |
 | Dilarang dependency baru | review diff `package.json` | manual |
@@ -263,4 +264,5 @@ yang merupakan permintaan eksplisit sehingga sah sebagai pengecualian aturan def
 
 | Versi | Tanggal | Perubahan |
 |---|---|---|
+| 1.1 | 2026-10-11 | Setup aplikasi dipindah ke `src/app.setup.ts` (dipakai main.ts & e2e); boilerplate `app.controller/service` dihapus; e2e penuh (16 kasus) + test hash immutability mocks. |
 | 1.0 | 2026-10-11 | Dokumen awal: overview repo, peta dokumen, stack, aturan kode (ESM, JSDoc, no komentar tak perlu, no dep baru), aturan file, immutable, alur kerja, pemeliharaan dokumentasi, penegakan. |

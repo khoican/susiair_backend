@@ -1,7 +1,5 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
-import { AppController } from './app.controller.js';
-import { AppService } from './app.service.js';
 import { MockDataModule } from './mock-data/mock-data.module.js';
 import { AuthModule } from './modules/auth/auth.module.js';
 import { DocumentsModule } from './modules/documents/documents.module.js';
@@ -19,7 +17,5 @@ import { SchedulesModule } from './modules/schedules/schedules.module.js';
     SchedulesModule,
     FlightHoursModule,
   ],
-  controllers: [AppController],
-  providers: [AppService],
 })
 export class AppModule {}

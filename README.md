@@ -185,3 +185,4 @@ Peta lengkap dan aturan kerja: lihat `AGENTS.md`.
 | 1.0 | 2026-10-11 | Ditulis ulang dari boilerplate NestJS: setup & running, variabel environment, keputusan teknis, roadmap, catatan pemeliharaan. |
 | 1.1 | 2026-10-11 | Env dimuat via `@nestjs/config` dari `.env`/`.env.example`; `JWT_SECRET` tidak di-hardcode (fail-fast). |
 | 1.2 | 2026-10-11 | Implementasi API: auth (login JWT), pilot, flight-hours (list + summary rolling sum), documents (badge urgensi), schedules (filter bulan) — semua terproteksi JWT respons dibungkus interceptor. |
+| 1.3 | 2026-10-11 | Setup aplikasi dipindah ke `src/app.setup.ts` (`configureApp` dipakai main.ts & e2e); boilerplate `app.controller/service` & `GET /` (Hello World) dihapus; e2e penuh 16 kasus + test hash immutability mocks. |
