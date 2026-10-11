@@ -56,6 +56,7 @@ src/
 │   ├── constants/     # anchor date, default pilot, konstanta JWT
 │   ├── filters/       # HttpExceptionFilter (respon error seragam)
 │   ├── guards/        # JwtAuthGuard
+│   ├── interceptors/  # TransformInterceptor (statusCode pada response sukses)
 │   └── utils/         # util tanggal (wrapper dayjs)
 ├── mock-data/         # MockDataService + mock-data.types.ts: baca 3 JSON dari mocks/ saat bootstrap
 ├── modules/

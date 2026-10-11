@@ -159,7 +159,6 @@ Peta lengkap dan aturan kerja: lihat `AGENTS.md`.
 - **i18n** — pesan error multi-bahasa.
 - **Observability** — tracing, metrics, structured logging.
 - **Database nyata** — menggantikan sumber in-memory bila data dinamis.
-- **Validasi env wajib di produksi** — fail-fast bila `JWT_SECRET` tidak diatur.
 
 ---
 
@@ -185,3 +184,4 @@ Peta lengkap dan aturan kerja: lihat `AGENTS.md`.
 |---|---|---|
 | 1.0 | 2026-10-11 | Ditulis ulang dari boilerplate NestJS: setup & running, variabel environment, keputusan teknis, roadmap, catatan pemeliharaan. |
 | 1.1 | 2026-10-11 | Env dimuat via `@nestjs/config` dari `.env`/`.env.example`; `JWT_SECRET` tidak di-hardcode (fail-fast). |
+| 1.2 | 2026-10-11 | Implementasi API: auth (login JWT), pilot, flight-hours (list + summary rolling sum), documents (badge urgensi), schedules (filter bulan) — semua terproteksi JWT respons dibungkus interceptor. |

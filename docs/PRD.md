@@ -108,7 +108,7 @@ Backend menyediakan 6 endpoint yang menyajikan data pilot, jam terbang, dokumen,
   ```json
   { "statusCode": 200, "data": [ { "date": "2026-05-01", "hours": 3.8 }, { "date": "2026-05-02", "hours": 0.0 } ] }
   ```
-- Hari tanpa record di JSON → `hours: 0.0`.
+- Hari tanpa record di JSON → `hours: 0.0`. Tanggal `> anchor (2026-05-15)` ikut `0.0` (lihat D6).
 
 ### 4.4 GET /api/flight-hours/summary
 
