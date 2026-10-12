@@ -1,4 +1,5 @@
-package:
+packages:
   - '.'
+
 allowBuilds:
   '@scarf/scarf': true
