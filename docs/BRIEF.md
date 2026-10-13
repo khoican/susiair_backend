@@ -19,7 +19,7 @@ Dokumen ini mendefinisikan spesifikasi teknis backend NestJS untuk aplikasi _Sus
 
 3. **Penerbitan & Proteksi JWT Token** :
 
-- Hardcoded credential: Username `johndoe`, Password `passjhondoe`.
+- Hardcoded credential: Username `johndoe`, Password `susiairtest`.
 
 - Seluruh endpoint wajib dilindungi `AuthGuard` berbasis JWT, kecuali `POST /auth/login`.
 
@@ -88,7 +88,7 @@ src/
 ```json
 {
   "username": "johndoe", // Required, string
-  "password": "passjhondoe" // Required, string
+  "password": "susiairtest" // Required, string
 }
 ```
 

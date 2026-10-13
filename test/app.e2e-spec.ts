@@ -23,7 +23,7 @@ async function createTestApp(): Promise<INestApplication<App>> {
 async function authToken(): Promise<string> {
   const res = await request(app.getHttpServer())
     .post('/api/auth/login')
-    .send({ username: 'johndoe', password: 'passjhondoe' })
+    .send({ username: 'johndoe', password: 'susiairtest' })
     .expect(200);
 
   return res.body.data.accessToken as string;
@@ -45,7 +45,7 @@ describe('POST /api/auth/login', () => {
   it('mengembalikan token dan pilot saat kredensial benar', async () => {
     const res = await request(app.getHttpServer())
       .post('/api/auth/login')
-      .send({ username: 'johndoe', password: 'passjhondoe' })
+      .send({ username: 'johndoe', password: 'susiairtest' })
       .expect(200);
 
     expect(res.body).toEqual({
@@ -84,7 +84,7 @@ describe('POST /api/auth/login', () => {
   it('menolak properti di luar DTO dengan 400 (forbidNonWhitelisted)', async () => {
     const res = await request(app.getHttpServer())
       .post('/api/auth/login')
-      .send({ username: 'johndoe', password: 'passjhondoe', evil: true })
+      .send({ username: 'johndoe', password: 'susiairtest', evil: true })
       .expect(400);
 
     expect(res.body.statusCode).toBe(400);

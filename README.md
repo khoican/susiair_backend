@@ -11,16 +11,16 @@ Kontrak API, acceptance criteria, dan decision log ada di `docs/PRD.md`.
 
 ## Tech Stack
 
-| Item | Nilai |
-|---|---|
-| Framework | NestJS 12 |
-| Bahasa | TypeScript (ESM, `module: nodenext`) |
-| Runtime | Node.js 24, pnpm 11 |
-| Autentikasi | `@nestjs/jwt` (Bearer token) |
-| Utilitas tanggal | `dayjs` |
-| Validasi | `class-validator`, `class-transformer` |
-| Test runner | Vitest |
-| Lint / Format | oxlint / Prettier |
+| Item             | Nilai                                  |
+| ---------------- | -------------------------------------- |
+| Framework        | NestJS 12                              |
+| Bahasa           | TypeScript (ESM, `module: nodenext`)   |
+| Runtime          | Node.js 24, pnpm 11                    |
+| Autentikasi      | `@nestjs/jwt` (Bearer token)           |
+| Utilitas tanggal | `dayjs`                                |
+| Validasi         | `class-validator`, `class-transformer` |
+| Test runner      | Vitest                                 |
+| Lint / Format    | oxlint / Prettier                      |
 
 ---
 
@@ -43,17 +43,17 @@ pnpm start:dev
 
 Server berjalan di `http://localhost:3001` dan seluruh endpoint berawalan `/api`.
 
-| Tujuan | Perintah |
-|---|---|
-| Install | `pnpm install` |
-| Dev (watch) | `pnpm start:dev` |
-| Build | `pnpm build` |
-| Produksi | `pnpm start:prod` |
-| Unit test | `pnpm test` |
-| E2E test | `pnpm test:e2e` |
-| Coverage | `pnpm test:cov` |
-| Lint | `pnpm lint` |
-| Format | `pnpm format` |
+| Tujuan      | Perintah          |
+| ----------- | ----------------- |
+| Install     | `pnpm install`    |
+| Dev (watch) | `pnpm start:dev`  |
+| Build       | `pnpm build`      |
+| Produksi    | `pnpm start:prod` |
+| Unit test   | `pnpm test`       |
+| E2E test    | `pnpm test:e2e`   |
+| Coverage    | `pnpm test:cov`   |
+| Lint        | `pnpm lint`       |
+| Format      | `pnpm format`     |
 
 ---
 
@@ -69,11 +69,11 @@ File `.env` **tidak** di-commit (ada di `.gitignore`); `.env.example` berisi pla
 acuan. **Tidak ada secret yang di-hardcode** — bila `JWT_SECRET` kosong, aplikasi gagal start
 (fail-fast).
 
-| Variabel | Wajib | Default | Keterangan |
-|---|---|---|---|
-| `PORT` | Tidak | `3001` | Port HTTP server. |
-| `JWT_SECRET` | **Ya** | — (fail-fast) | Secret penandatangan/verifikasi JWT. |
-| `JWT_EXPIRES_IN` | Tidak | `1d` | Masa berlaku access token. |
+| Variabel         | Wajib  | Default       | Keterangan                           |
+| ---------------- | ------ | ------------- | ------------------------------------ |
+| `PORT`           | Tidak  | `3001`        | Port HTTP server.                    |
+| `JWT_SECRET`     | **Ya** | — (fail-fast) | Secret penandatangan/verifikasi JWT. |
+| `JWT_EXPIRES_IN` | Tidak  | `1d`          | Masa berlaku access token.           |
 
 Contoh `.env`:
 
@@ -92,23 +92,23 @@ Prefix global: `/api`.
 
 Dokumentasi interaktif (OpenAPI/Swagger): `http://localhost:3001/api/docs` (spec JSON di `/api/docs-json`).
 
-| Method | Path | Auth | Keterangan |
-|---|---|---|---|
-| POST | `/api/auth/login` | Publik | Login, menerbitkan access token |
-| GET | `/api/pilot/me` | JWT | Profil pilot + total jam terbang |
-| GET | `/api/flight-hours` | JWT | Deret jam terbang harian (`from`, `to`) |
-| GET | `/api/flight-hours/summary` | JWT | Ringkasan cards + chart (`range`) |
-| GET | `/api/documents` | JWT | Daftar dokumen + badge urgensi |
-| GET | `/api/schedules` | JWT | Legend + jadwal bulanan (`year`, `month`) |
+| Method | Path                        | Auth   | Keterangan                                |
+| ------ | --------------------------- | ------ | ----------------------------------------- |
+| POST   | `/api/auth/login`           | Publik | Login, menerbitkan access token           |
+| GET    | `/api/pilot/me`             | JWT    | Profil pilot + total jam terbang          |
+| GET    | `/api/flight-hours`         | JWT    | Deret jam terbang harian (`from`, `to`)   |
+| GET    | `/api/flight-hours/summary` | JWT    | Ringkasan cards + chart (`range`)         |
+| GET    | `/api/documents`            | JWT    | Daftar dokumen + badge urgensi            |
+| GET    | `/api/schedules`            | JWT    | Legend + jadwal bulanan (`year`, `month`) |
 
-Kredensial login (hardcoded, assessment): username `johndoe`, password `passjhondoe`.
+Kredensial login (hardcoded, assessment): username `johndoe`, password `susiairtest`.
 
 Contoh:
 
 ```bash
 curl -X POST http://localhost:3001/api/auth/login \
   -H 'Content-Type: application/json' \
-  -d '{"username":"johndoe","password":"passjhondoe"}'
+  -d '{"username":"johndoe","password":"susiairtest"}'
 ```
 
 Detail kontrak (shape request/response, error, edge case) ada di `docs/PRD.md` §4; ringkasan cara pakai + sampel di `API.md`.
@@ -117,18 +117,18 @@ Detail kontrak (shape request/response, error, edge case) ada di `docs/PRD.md` �
 
 ## Keputusan Teknis & Alasan
 
-| Keputusan | Alasan |
-|---|---|
-| **In-memory, tanpa database** | Assessment; data cukup dari file JSON, tanpa infra. |
-| **Anchor date global `2026-05-15`** | Menjamin kalkulasi "hari ini" konsisten di seluruh modul. `new Date()` tanpa argumen dilarang. |
-| **`today: "2026-05-31"` di `mock-documents.json` diabaikan** | Override ke anchor date dilakukan di runtime agar konsisten dengan jadwal & logbook. |
-| **`mocks/**` read-only** | Sumber data immutable; normalisasi dilakukan di kode, bukan dengan menyunting JSON. |
-| **Import relatif bersuffix `.js`** | Wajib untuk TypeScript ESM (`module: nodenext`). |
-| **Vitest, bukan Jest** | Konfigurasi test runner repo ini. |
-| **JWT secret dari env (fallback dev)** | Fleksibel & aman untuk produksi; fallback memudahkan development. |
-| **Chart `/flight-hours/summary` 15 titik harian** | Mengikuti aturan rolling sum pada `docs/BRIEF.md` §4.3 (`TODAY-7` s.d. `TODAY+7`). |
-| **`isCompleted = count_logbooks === count_schedules`** | Sesuai field guide mock; `status` dikembalikan apa adanya. |
-| **Data flight-hours `> 2026-05-15` dihitung `0.0`** | Representasi masa depan; file mock menyimpan data hingga `2026-05-31`. |
+| Keputusan                                                    | Alasan                                                                                         |
+| ------------------------------------------------------------ | ---------------------------------------------------------------------------------------------- |
+| **In-memory, tanpa database**                                | Assessment; data cukup dari file JSON, tanpa infra.                                            |
+| **Anchor date global `2026-05-15`**                          | Menjamin kalkulasi "hari ini" konsisten di seluruh modul. `new Date()` tanpa argumen dilarang. |
+| **`today: "2026-05-31"` di `mock-documents.json` diabaikan** | Override ke anchor date dilakukan di runtime agar konsisten dengan jadwal & logbook.           |
+| **`mocks/**` read-only**                                     | Sumber data immutable; normalisasi dilakukan di kode, bukan dengan menyunting JSON.            |
+| **Import relatif bersuffix `.js`**                           | Wajib untuk TypeScript ESM (`module: nodenext`).                                               |
+| **Vitest, bukan Jest**                                       | Konfigurasi test runner repo ini.                                                              |
+| **JWT secret dari env (fallback dev)**                       | Fleksibel & aman untuk produksi; fallback memudahkan development.                              |
+| **Chart `/flight-hours/summary` 15 titik harian**            | Mengikuti aturan rolling sum pada `docs/BRIEF.md` §4.3 (`TODAY-7` s.d. `TODAY+7`).             |
+| **`isCompleted = count_logbooks === count_schedules`**       | Sesuai field guide mock; `status` dikembalikan apa adanya.                                     |
+| **Data flight-hours `> 2026-05-15` dihitung `0.0`**          | Representasi masa depan; file mock menyimpan data hingga `2026-05-31`.                         |
 
 ---
 
@@ -166,12 +166,12 @@ Peta lengkap dan aturan kerja: lihat `AGENTS.md`.
 
 ## Dokumentasi Terkait
 
-| Dokumen | Isi |
-|---|---|
-| `docs/BRIEF.md` | Spesifikasi teknis asli (domain, aturan, endpoint). |
-| `docs/PRD.md` | Kontrak API, acceptance criteria, decision log. |
-| `API.md` | Spesifikasi & cara pakai API: endpoint, params, sampel sukses/error. |
-| `AGENTS.md` | Kebijakan repo, aturan kode, alur kerja. |
+| Dokumen         | Isi                                                                  |
+| --------------- | -------------------------------------------------------------------- |
+| `docs/BRIEF.md` | Spesifikasi teknis asli (domain, aturan, endpoint).                  |
+| `docs/PRD.md`   | Kontrak API, acceptance criteria, decision log.                      |
+| `API.md`        | Spesifikasi & cara pakai API: endpoint, params, sampel sukses/error. |
+| `AGENTS.md`     | Kebijakan repo, aturan kode, alur kerja.                             |
 
 ---
 
@@ -183,11 +183,11 @@ Peta lengkap dan aturan kerja: lihat `AGENTS.md`.
 
 ### Change Log
 
-| Versi | Tanggal | Perubahan |
-|---|---|---|
-| 1.0 | 2026-10-11 | Ditulis ulang dari boilerplate NestJS: setup & running, variabel environment, keputusan teknis, roadmap, catatan pemeliharaan. |
-| 1.1 | 2026-10-11 | Env dimuat via `@nestjs/config` dari `.env`/`.env.example`; `JWT_SECRET` tidak di-hardcode (fail-fast). |
-| 1.2 | 2026-10-11 | Implementasi API: auth (login JWT), pilot, flight-hours (list + summary rolling sum), documents (badge urgensi), schedules (filter bulan) — semua terproteksi JWT respons dibungkus interceptor. |
-| 1.3 | 2026-10-11 | Setup aplikasi dipindah ke `src/app.setup.ts` (`configureApp` dipakai main.ts & e2e); boilerplate `app.controller/service` & `GET /` (Hello World) dihapus; e2e penuh 16 kasus + test hash immutability mocks. |
-| 1.4 | 2026-10-11 | Tambah `API.md`: spesifikasi & cara pakai seluruh endpoint (params, sampel sukses/error). |
-| 1.5 | 2026-10-11 | Dokumentasi interaktif via `@nestjs/swagger` di `/api/docs` (dekorator `@ApiProperty` manual); `pnpm-workspace.yaml` (`allowBuilds` `@scarf/scarf`). |
+| Versi | Tanggal    | Perubahan                                                                                                                                                                                                      |
+| ----- | ---------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1.0   | 2026-10-11 | Ditulis ulang dari boilerplate NestJS: setup & running, variabel environment, keputusan teknis, roadmap, catatan pemeliharaan.                                                                                 |
+| 1.1   | 2026-10-11 | Env dimuat via `@nestjs/config` dari `.env`/`.env.example`; `JWT_SECRET` tidak di-hardcode (fail-fast).                                                                                                        |
+| 1.2   | 2026-10-11 | Implementasi API: auth (login JWT), pilot, flight-hours (list + summary rolling sum), documents (badge urgensi), schedules (filter bulan) — semua terproteksi JWT respons dibungkus interceptor.               |
+| 1.3   | 2026-10-11 | Setup aplikasi dipindah ke `src/app.setup.ts` (`configureApp` dipakai main.ts & e2e); boilerplate `app.controller/service` & `GET /` (Hello World) dihapus; e2e penuh 16 kasus + test hash immutability mocks. |
+| 1.4   | 2026-10-11 | Tambah `API.md`: spesifikasi & cara pakai seluruh endpoint (params, sampel sukses/error).                                                                                                                      |
+| 1.5   | 2026-10-11 | Dokumentasi interaktif via `@nestjs/swagger` di `/api/docs` (dekorator `@ApiProperty` manual); `pnpm-workspace.yaml` (`allowBuilds` `@scarf/scarf`).                                                           |

@@ -15,18 +15,18 @@
 
 ## 1. Ringkasan
 
-Backend REST API (NestJS 12) untuk aplikasi *Susi Air Pilot App*, dikonsumsi frontend Nuxt 3.
+Backend REST API (NestJS 12) untuk aplikasi _Susi Air Pilot App_, dikonsumsi frontend Nuxt 3.
 Backend menyediakan 6 endpoint yang menyajikan data pilot, jam terbang, dokumen, dan jadwal.
 **Tidak ada database eksternal** — seluruh data dibaca dari file JSON di `mocks/` saat bootstrap.
 
 **Quick facts:**
 
-| Item | Nilai |
-|------|-------|
-| Target user | Pilot (single hardcoded user) |
-| Masalah | Frontend butuh API kontrak tetap tanpa infra database |
+| Item          | Nilai                                                                                  |
+| ------------- | -------------------------------------------------------------------------------------- |
+| Target user   | Pilot (single hardcoded user)                                                          |
+| Masalah       | Frontend butuh API kontrak tetap tanpa infra database                                  |
 | Metrik sukses | Semua 6 endpoint mengembalikan shape sesuai kontrak; seluruh acceptance criteria lulus |
-| Stack | NestJS 12, TypeScript ESM, Vitest, dayjs, `@nestjs/jwt` |
+| Stack         | NestJS 12, TypeScript ESM, Vitest, dayjs, `@nestjs/jwt`                                |
 
 ### Non-Goals
 
@@ -41,7 +41,7 @@ Backend menyediakan 6 endpoint yang menyajikan data pilot, jam terbang, dokumen,
 
 **Primary — Pilot (hardcoded).**
 
-- Login `johndoe` / `passjhondoe`, profil `{ id: "pilot_001", name: "John Doe" }`.
+- Login `johndoe` / `susiairtest`, profil `{ id: "pilot_001", name: "John Doe" }`.
 - Melihat jam terbang, status dokumen (kedaluwarsa), dan jadwal bulanan.
 - Tidak ada registrasi, lupa password, atau manajemen akun.
 
@@ -68,35 +68,50 @@ Backend menyediakan 6 endpoint yang menyajikan data pilot, jam terbang, dokumen,
 
 ## 4. Endpoint Contract
 
-| # | Method | Path | Auth | Input | Ringkas |
-|---|--------|------|------|-------|---------|
-| 1 | POST | `/api/auth/login` | Publik | body `{username, password}` | Terbitkan JWT |
-| 2 | GET | `/api/pilot/me` | JWT | — | Profil + total jam |
-| 3 | GET | `/api/flight-hours` | JWT | `from`, `to` (YYYY-MM-DD) | Deret harian jam terbang |
-| 4 | GET | `/api/flight-hours/summary` | JWT | `range` enum (`1w`..`1y`, default `1w`) | Cards + chart rolling sum |
-| 5 | GET | `/api/documents` | JWT | — | Daftar dokumen + badge urgensi |
-| 6 | GET | `/api/schedules` | JWT | `year`, `month` | Legend + jadwal bulan tsb |
+| #   | Method | Path                        | Auth   | Input                                   | Ringkas                        |
+| --- | ------ | --------------------------- | ------ | --------------------------------------- | ------------------------------ |
+| 1   | POST   | `/api/auth/login`           | Publik | body `{username, password}`             | Terbitkan JWT                  |
+| 2   | GET    | `/api/pilot/me`             | JWT    | —                                       | Profil + total jam             |
+| 3   | GET    | `/api/flight-hours`         | JWT    | `from`, `to` (YYYY-MM-DD)               | Deret harian jam terbang       |
+| 4   | GET    | `/api/flight-hours/summary` | JWT    | `range` enum (`1w`..`1y`, default `1w`) | Cards + chart rolling sum      |
+| 5   | GET    | `/api/documents`            | JWT    | —                                       | Daftar dokumen + badge urgensi |
+| 6   | GET    | `/api/schedules`            | JWT    | `year`, `month`                         | Legend + jadwal bulan tsb      |
 
 ### 4.1 POST /api/auth/login
 
 - Body (DTO `LoginDto`): `username` (string, required), `password` (string, required).
 - Sukses `200`:
   ```json
-  { "statusCode": 200, "message": "Login successful",
-    "data": { "accessToken": "<jwt>", "pilot": { "id": "pilot_001", "name": "John Doe", "username": "johndoe" } } }
+  {
+    "statusCode": 200,
+    "message": "Login successful",
+    "data": {
+      "accessToken": "<jwt>",
+      "pilot": { "id": "pilot_001", "name": "John Doe", "username": "johndoe" }
+    }
+  }
   ```
 - Gagal kredensial `401`:
   ```json
-  { "statusCode": 401, "message": "Invalid username or password", "error": "Unauthorized" }
+  {
+    "statusCode": 401,
+    "message": "Invalid username or password",
+    "error": "Unauthorized"
+  }
   ```
 
 ### 4.2 GET /api/pilot/me
 
 - Sukses `200`:
   ```json
-  { "statusCode": 200,
-    "data": { "name": "John Doe", "totalFlightHours": 1444.5,
-      "avatarUrl": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=250" } }
+  {
+    "statusCode": 200,
+    "data": {
+      "name": "John Doe",
+      "totalFlightHours": 1444.5,
+      "avatarUrl": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=250"
+    }
+  }
   ```
 - `totalFlightHours` = nilai `pilot.totalFlightHours` dari `mock-flight-hours.json`.
 - `avatarUrl` = konstanta default profile (`app.constant.ts`).
@@ -106,7 +121,13 @@ Backend menyediakan 6 endpoint yang menyajikan data pilot, jam terbang, dokumen,
 - Query `from` (ISO `YYYY-MM-DD`, required), `to` (ISO, required).
 - Sukses `200`: label `data` berisi **satu entri per hari** dalam `[from, to]` (inklusif):
   ```json
-  { "statusCode": 200, "data": [ { "date": "2026-05-01", "hours": 3.8 }, { "date": "2026-05-02", "hours": 0.0 } ] }
+  {
+    "statusCode": 200,
+    "data": [
+      { "date": "2026-05-01", "hours": 3.8 },
+      { "date": "2026-05-02", "hours": 0.0 }
+    ]
+  }
   ```
 - Hari tanpa record di JSON → `hours: 0.0`. Tanggal `> anchor (2026-05-15)` ikut `0.0` (lihat D6).
 
@@ -116,13 +137,13 @@ Backend menyediakan 6 endpoint yang menyajikan data pilot, jam terbang, dokumen,
 
 **Bounds per range** (windowDays / limit / max):
 
-| range | windowDays | limit | max |
-|-------|-----------|-------|-----|
-| 1w | 7 | 40 | 45 |
-| 1m | 30 | 100 | 125 |
-| 3m | 90 | 300 | 325 |
-| 6m | 180 | 600 | 625 |
-| 1y | 365 | 1050 | 1200 |
+| range | windowDays | limit | max  |
+| ----- | ---------- | ----- | ---- |
+| 1w    | 7          | 40    | 45   |
+| 1m    | 30         | 100   | 125  |
+| 3m    | 90         | 300   | 325  |
+| 6m    | 180        | 600   | 625  |
+| 1y    | 365        | 1050  | 1200 |
 
 **Chart (15 titik harian — lihat Decision Log):**
 
@@ -139,7 +160,8 @@ Backend menyediakan 6 endpoint yang menyajikan data pilot, jam terbang, dokumen,
 
 - Sukses `200`:
   ```json
-  { "statusCode": 200,
+  {
+    "statusCode": 200,
     "data": {
       "cards": {
         "daily": { "current": 6.4, "limit": 8 },
@@ -148,10 +170,17 @@ Backend menyediakan 6 endpoint yang menyajikan data pilot, jam terbang, dokumen,
         "annual": { "current": 820.5, "limit": 1050 }
       },
       "chart": {
-        "range": "1w", "limitLine": 40, "yMax": 45,
-        "series": [ { "date": "2026-05-08", "sum": 28.5 }, { "date": "2026-05-15", "sum": 30.6 }, { "date": "2026-05-22", "sum": 38.2 } ]
+        "range": "1w",
+        "limitLine": 40,
+        "yMax": 45,
+        "series": [
+          { "date": "2026-05-08", "sum": 28.5 },
+          { "date": "2026-05-15", "sum": 30.6 },
+          { "date": "2026-05-22", "sum": 38.2 }
+        ]
       }
-    } }
+    }
+  }
   ```
   > `series` pada contoh di atas dipersingkat; implementasi **wajib** menghasilkan 15 entri (lihat AC-FH-05).
 
@@ -161,9 +190,19 @@ Backend menyediakan 6 endpoint yang menyajikan data pilot, jam terbang, dokumen,
 - Urgensi: `<= 0` → `expired` / `#E63757`; `0 < d <= 30` → `soon` / `#F59E0B`; `> 30` → `safe` / `#1FBF8F`.
 - Sukses `200`:
   ```json
-  { "statusCode": 200,
-    "data": [ { "id": "doc_license", "label": "Indonesian License Exp. Date", "expiryDate": "2026-05-29",
-      "daysRemaining": 14, "status": "soon", "badgeColor": "#F59E0B" } ] }
+  {
+    "statusCode": 200,
+    "data": [
+      {
+        "id": "doc_license",
+        "label": "Indonesian License Exp. Date",
+        "expiryDate": "2026-05-29",
+        "daysRemaining": 14,
+        "status": "soon",
+        "badgeColor": "#F59E0B"
+      }
+    ]
+  }
   ```
 - Ambang 30 hari diambil dari `mock-documents.json` `thresholds.warningDays`.
 
@@ -173,11 +212,25 @@ Backend menyediakan 6 endpoint yang menyajikan data pilot, jam terbang, dokumen,
 - Filter entri `schedules[]` di mana `duty_date` berada pada bulan/tahun tsb.
 - Sukses `200`:
   ```json
-  { "statusCode": 200,
+  {
+    "statusCode": 200,
     "data": {
-      "legend": [ { "code": "DTY", "label": "On Duty", "color": "#10B981" } ],
-      "schedules": [ { "id": "97027", "duty_date": "2026-05-15", "status": 1, "base_name": "MKW",
-        "base_color": "#10B981", "duty_type": "DTY", "count_schedules": 6, "count_logbooks": 6, "isCompleted": true } ] } }
+      "legend": [{ "code": "DTY", "label": "On Duty", "color": "#10B981" }],
+      "schedules": [
+        {
+          "id": "97027",
+          "duty_date": "2026-05-15",
+          "status": 1,
+          "base_name": "MKW",
+          "base_color": "#10B981",
+          "duty_type": "DTY",
+          "count_schedules": 6,
+          "count_logbooks": 6,
+          "isCompleted": true
+        }
+      ]
+    }
+  }
   ```
 - `legend` = seluruh entri `legend` dari `mock-schedules.json` (10 kode: DTY, RLV, SCK, TRD, TRX, ADM, FER, MED, REC, ULV).
 - `isCompleted` dihitung (tidak ada di sumber) — lihat Decision Log.
@@ -189,10 +242,12 @@ Backend menyediakan 6 endpoint yang menyajikan data pilot, jam terbang, dokumen,
 ### Epic A — Auth
 
 **A1. Login**
+
 ```
 Sebagai pilot, saya ingin login dengan kredensial, agar mendapat token untuk mengakses API.
 ```
-- [ ] AC-A-01: `POST /api/auth/login` dengan `johndoe`/`passjhondoe` → `200`, `data.accessToken` JWT valid, `data.pilot` sesuai kontrak.
+
+- [ ] AC-A-01: `POST /api/auth/login` dengan `johndoe`/`susiairtest` → `200`, `data.accessToken` JWT valid, `data.pilot` sesuai kontrak.
 - [ ] AC-A-02: kredensial salah → `401` dengan `message: "Invalid username or password"`.
 - [ ] AC-A-03: `username`/`password` kosong atau hilang → `400` (ValidationPipe).
 - [ ] AC-A-04: properti body di luar DTO ditolak `400` (`forbidNonWhitelisted`).
@@ -200,27 +255,33 @@ Sebagai pilot, saya ingin login dengan kredensial, agar mendapat token untuk men
 ### Epic B — Pilot
 
 **B1. Profil**
+
 ```
 Sebagai pilot, saya ingin melihat profil & total jam, agar tahu akumulasi jam terbang saya.
 ```
+
 - [ ] AC-B-01: `GET /api/pilot/me` tanpa token → `401`.
 - [ ] AC-B-02: dengan token valid → `200`, `data` = `{name, totalFlightHours, avatarUrl}` sesuai kontrak; `totalFlightHours` = `1444.5`.
 
 ### Epic C — Flight Hours
 
 **C1. Deret harian**
+
 ```
 Sebagai pilot, saya ingin melihat jam terbang per hari pada rentang tertentu.
 ```
+
 - [ ] AC-FH-01: `from`/`to` valid → `200`, satu entri per hari inklusif.
 - [ ] AC-FH-02: hari tanpa data → `hours: 0.0`.
 - [ ] AC-FH-03: `from`/`to` hilang atau format bukan `YYYY-MM-DD` → `400`.
 
 **C2. Summary rolling sum**
+
 ```
 Sebagai pilot, saya ingin melihat ringkasan jam (harian/mingguan/bulanan/tahunan) dan grafik tren,
 agar bisa memantau batas jam terbang.
 ```
+
 - [ ] AC-FH-04: `range` di luar enum → `400`; tanpa `range` → default `1w`.
 - [ ] AC-FH-05: `chart.series` berisi **tepat 15 entri**, `series[0].date = 2026-05-08`, `series[7].date = 2026-05-15`, `series[14].date = 2026-05-22`.
 - [ ] AC-FH-06: nilai `sum` tiap titik = rolling sum sesuai `windowDays` range; tanggal masa depan dihitung `0.0`.
@@ -231,9 +292,11 @@ agar bisa memantau batas jam terbang.
 ### Epic D — Documents
 
 **D1. Badge urgensi**
+
 ```
 Sebagai pilot, saya ingin tahu dokumen mana yang mendekati/lewat kedaluwarsa.
 ```
+
 - [ ] AC-DOC-01: `daysRemaining` = selisih hari terhadap anchor `2026-05-15` (bukan `today` di mock).
 - [ ] AC-DOC-02: klasifikasi status & `badgeColor` sesuai ambang (termasuk batas `<=0` dan `<=30`).
 - [ ] AC-DOC-03: `GET /api/documents` tanpa token → `401`.
@@ -242,9 +305,11 @@ Sebagai pilot, saya ingin tahu dokumen mana yang mendekati/lewat kedaluwarsa.
 ### Epic E — Schedules
 
 **E1. Jadwal bulanan**
+
 ```
 Sebagai pilot, saya ingin melihat jadwal duty per bulan beserta legend.
 ```
+
 - [ ] AC-SCH-01: `year`+`month` valid → hanya entri dengan `duty_date` pada bulan/tahun tsb.
 - [ ] AC-SCH-02: `year`/`month` string angka (`"2026"`, `"05"`) dikonversi otomatis (implicit conversion).
 - [ ] AC-SCH-03: `year`/`month` hilang/invalid → `400`.
@@ -256,35 +321,35 @@ Sebagai pilot, saya ingin melihat jadwal duty per bulan beserta legend.
 
 ## 6. Decision Log (resolusi ambiguitas)
 
-| # | Topik | Keputusan | Alasan |
-|---|-------|-----------|--------|
-| D1 | Titik chart | **15 titik harian** `TODAY-7`..`TODAY+7`; index 7 = TODAY | Mengikuti aturan §4.3 BRIEF; contoh 3 titik = ilustrasi. |
-| D2 | `displayRangeDays` di mock | **Diabaikan**; chart fixed 15 titik | BRIEF tidak mendefinisikan pengaruhnya. `ponytail:` ceiling — bila kelak butuh range dinamis, ganti fixed 15 dengan `2*displayRangeDays+1`. |
-| D3 | `isCompleted` | `count_logbooks === count_schedules` | Konsisten dengan field guide & contoh (`status:1` + flag true). |
-| D4 | `status` field | Dikembalikan apa adanya dari mock | Tidak ada aturan transformasi. |
-| D5 | Override `today` dokumen | `mock-documents.json` `today:"2026-05-31"` diabaikan → anchor `2026-05-15` | BRIEF §2 + aturan immutable mocks. |
-| D6 | Filter `mock-flight-hours` | Data `> 2026-05-15` di-nol-kan saat runtime (data ada sampai `2026-05-31`) | Masa depan = `0.0`; file mock tidak disentuh. |
-| D7 | JWT | `JWT_SECRET` dari env (fail-fast `error` bila kosong); expiry `JWT_EXPIRES_IN ?? '1d'` | Tidak ada secret dev; keamanan dasar. |
-| D8 | Port | `process.env.PORT ?? 3001` | BRIEF §5; kode starter masih 3000 → disesuaikan. |
-| D9 | Prefix | `/api` | BRIEF §5 `setGlobalPrefix('api')`. |
-| D10 | `avatarUrl` | Konstanta default profile | Tidak ada di mock; contoh BRIEF dipakai. |
-| D11 | Setup app | `configureApp(app)` di `src/app.setup.ts` dipakai `main.ts` & e2e | Hindari drift konfigurasi global antara runtime dan test. |
-| D12 | Dokumentasi interaktif | Swagger/OpenAPI via `@nestjs/swagger` di `/api/docs`; dekorator `@ApiProperty` manual | Kebutuhan user; tanpa CLI plugin agar eksplisit. |
+| #   | Topik                      | Keputusan                                                                              | Alasan                                                                                                                                      |
+| --- | -------------------------- | -------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
+| D1  | Titik chart                | **15 titik harian** `TODAY-7`..`TODAY+7`; index 7 = TODAY                              | Mengikuti aturan §4.3 BRIEF; contoh 3 titik = ilustrasi.                                                                                    |
+| D2  | `displayRangeDays` di mock | **Diabaikan**; chart fixed 15 titik                                                    | BRIEF tidak mendefinisikan pengaruhnya. `ponytail:` ceiling — bila kelak butuh range dinamis, ganti fixed 15 dengan `2*displayRangeDays+1`. |
+| D3  | `isCompleted`              | `count_logbooks === count_schedules`                                                   | Konsisten dengan field guide & contoh (`status:1` + flag true).                                                                             |
+| D4  | `status` field             | Dikembalikan apa adanya dari mock                                                      | Tidak ada aturan transformasi.                                                                                                              |
+| D5  | Override `today` dokumen   | `mock-documents.json` `today:"2026-05-31"` diabaikan → anchor `2026-05-15`             | BRIEF §2 + aturan immutable mocks.                                                                                                          |
+| D6  | Filter `mock-flight-hours` | Data `> 2026-05-15` di-nol-kan saat runtime (data ada sampai `2026-05-31`)             | Masa depan = `0.0`; file mock tidak disentuh.                                                                                               |
+| D7  | JWT                        | `JWT_SECRET` dari env (fail-fast `error` bila kosong); expiry `JWT_EXPIRES_IN ?? '1d'` | Tidak ada secret dev; keamanan dasar.                                                                                                       |
+| D8  | Port                       | `process.env.PORT ?? 3001`                                                             | BRIEF §5; kode starter masih 3000 → disesuaikan.                                                                                            |
+| D9  | Prefix                     | `/api`                                                                                 | BRIEF §5 `setGlobalPrefix('api')`.                                                                                                          |
+| D10 | `avatarUrl`                | Konstanta default profile                                                              | Tidak ada di mock; contoh BRIEF dipakai.                                                                                                    |
+| D11 | Setup app                  | `configureApp(app)` di `src/app.setup.ts` dipakai `main.ts` & e2e                      | Hindari drift konfigurasi global antara runtime dan test.                                                                                   |
+| D12 | Dokumentasi interaktif     | Swagger/OpenAPI via `@nestjs/swagger` di `/api/docs`; dekorator `@ApiProperty` manual  | Kebutuhan user; tanpa CLI plugin agar eksplisit.                                                                                            |
 
 ---
 
 ## 7. Edge Case Matrix
 
-| Kasus | Tindakan wajib |
-|-------|----------------|
-| Query string angka (`month="05"`) | Konversi otomatis via class-transformer (`enableImplicitConversion`). |
-| Tanggal grafik di luar dataset JSON | Tetap kalkulasi data yang ada; isi tanpa data dengan `0.0`. |
-| Tanpa header `Authorization: Bearer <token>` | `401 Unauthorized` seragam via `HttpExceptionFilter`. |
-| Range masa depan | Jam masa depan `0.0`; TODAY tetap jangkar tengah grafik. |
-| Token invalid/kedaluwarsa | `401` via guard. |
-| Body/query non-whitelist | `400` (ValidationPipe `forbidNonWhitelisted`). |
-| Bulan tanpa jadwal | `200` dengan `schedules: []`. |
-| File mock berubah | Dilarang (constraint §3.4) — dijaga test (lihat §10). |
+| Kasus                                        | Tindakan wajib                                                        |
+| -------------------------------------------- | --------------------------------------------------------------------- |
+| Query string angka (`month="05"`)            | Konversi otomatis via class-transformer (`enableImplicitConversion`). |
+| Tanggal grafik di luar dataset JSON          | Tetap kalkulasi data yang ada; isi tanpa data dengan `0.0`.           |
+| Tanpa header `Authorization: Bearer <token>` | `401 Unauthorized` seragam via `HttpExceptionFilter`.                 |
+| Range masa depan                             | Jam masa depan `0.0`; TODAY tetap jangkar tengah grafik.              |
+| Token invalid/kedaluwarsa                    | `401` via guard.                                                      |
+| Body/query non-whitelist                     | `400` (ValidationPipe `forbidNonWhitelisted`).                        |
+| Bulan tanpa jadwal                           | `200` dengan `schedules: []`.                                         |
+| File mock berubah                            | Dilarang (constraint §3.4) — dijaga test (lihat §10).                 |
 
 ---
 
@@ -335,17 +400,17 @@ Acceptance criteria (§5) menjadi basis test case.
 
 ## 11. Risiko & Open Questions
 
-| Risiko/Open | Dampak | Mitigasi/Status |
-|-------------|--------|-----------------|
-| Format `error` pada error non-login tak didefinisikan eksplisit | Inkonsistensi response | `HttpExceptionFilter` menyeragamkan; konfirmasi ke frontend bila perlu. |
-| Nilai pasti `avatarUrl`/`pilot.id` hanya contoh | Frontend mungkin beda ekspektasi | Pakai konstanta default (D10); mudah diganti 1 baris. |
-| JWT secret dev hardcoded | Tidak aman di produksi | D7: `ponytail:` ganti ke env wajib saat produksi. |
-| Contoh `series` di BRIEF hanya 3 titik | Implementor salah kaprah | D1 + AC-FH-05 mengunci 15 titik. |
+| Risiko/Open                                                     | Dampak                           | Mitigasi/Status                                                         |
+| --------------------------------------------------------------- | -------------------------------- | ----------------------------------------------------------------------- |
+| Format `error` pada error non-login tak didefinisikan eksplisit | Inkonsistensi response           | `HttpExceptionFilter` menyeragamkan; konfirmasi ke frontend bila perlu. |
+| Nilai pasti `avatarUrl`/`pilot.id` hanya contoh                 | Frontend mungkin beda ekspektasi | Pakai konstanta default (D10); mudah diganti 1 baris.                   |
+| JWT secret dev hardcoded                                        | Tidak aman di produksi           | D7: `ponytail:` ganti ke env wajib saat produksi.                       |
+| Contoh `series` di BRIEF hanya 3 titik                          | Implementor salah kaprah         | D1 + AC-FH-05 mengunci 15 titik.                                        |
 
 ---
 
 ## 12. Change Log
 
-| Versi | Tanggal | Perubahan |
-|-------|---------|-----------|
-| 1.0 | 2026-10-11 | Draft awal; keputusan D1–D10; aturan mocks immutable. |
+| Versi | Tanggal    | Perubahan                                             |
+| ----- | ---------- | ----------------------------------------------------- |
+| 1.0   | 2026-10-11 | Draft awal; keputusan D1–D10; aturan mocks immutable. |

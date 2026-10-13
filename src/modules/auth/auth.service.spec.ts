@@ -13,7 +13,7 @@ describe('AuthService', () => {
 
     const result = await service.login({
       username: 'johndoe',
-      password: 'passjhondoe',
+      password: 'susiairtest',
     });
 
     expect(result).toEqual({
@@ -26,7 +26,7 @@ describe('AuthService', () => {
     const service = createService(async () => 'signed-token');
 
     await expect(
-      service.login({ username: 'someone', password: 'passjhondoe' }),
+      service.login({ username: 'someone', password: 'susiairtest' }),
     ).rejects.toBeInstanceOf(UnauthorizedException);
   });
 

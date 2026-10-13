@@ -5,9 +5,9 @@ ada di `docs/PRD.md`; dokumen ini ringkasan cara pakai + sampel response.
 
 ## 1. Pengenalan
 
-- Base URL: `http://localhost:3001` (port bisa diubah via env `PORT`).
+- Base URL: `susiairbackend-production.up.railway.app` (port bisa diubah via env `PORT`).
 - Prefix global: `/api` → semua endpoint dipanggil sebagai `/api/<path>`.
-- Dokumentasi interaktif (OpenAPI/Swagger): `http://localhost:3001/api/docs`, spec JSON di `/api/docs-json`.
+- Dokumentasi interaktif (OpenAPI/Swagger): `/api/docs`, spec JSON di `/api/docs-json`.
 - Format respons **sukses** dibungkus interceptor:
 
   ```json
@@ -15,6 +15,7 @@ ada di `docs/PRD.md`; dokumen ini ringkasan cara pakai + sampel response.
   ```
 
   Khusus login, terdapat bidang tambahan `message`.
+
 - Format respons **error** dihasilkan `HttpExceptionFilter`:
 
   ```json
@@ -29,7 +30,7 @@ ada di `docs/PRD.md`; dokumen ini ringkasan cara pakai + sampel response.
   Authorization: Bearer <accessToken>
   ```
 
-- Kredensial demo: `username` = `johndoe`, `password` = `passjhondoe`.
+- Kredensial demo: `username` = `johndoe`, `password` = `susiairtest`.
 
 ## 2. Autentikasi
 
@@ -37,10 +38,10 @@ ada di `docs/PRD.md`; dokumen ini ringkasan cara pakai + sampel response.
 
 Body (JSON):
 
-| Field | Tipe | Required | Keterangan |
-|---|---|---|---|
-| `username` | string | ya | Username pilot. |
-| `password` | string | ya | Password pilot. |
+| Field      | Tipe   | Required | Keterangan      |
+| ---------- | ------ | -------- | --------------- |
+| `username` | string | ya       | Username pilot. |
+| `password` | string | ya       | Password pilot. |
 
 **Sukses `200`:**
 
@@ -78,9 +79,9 @@ Body (JSON):
 Contoh:
 
 ```bash
-curl -X POST http://localhost:3001/api/auth/login \
+curl -X POST /api/auth/login \
   -H 'Content-Type: application/json' \
-  -d '{"username":"johndoe","password":"passjhondoe"}'
+  -d '{"username":"johndoe","password":"susiairtest"}'
 ```
 
 Ambil `accessToken` dari respons untuk header `Authorization` pada endpoint berikut.
@@ -119,10 +120,10 @@ Deret jam terbang harian pada rentang tanggal (inklusif satu entri per hari).
 
 Query params:
 
-| Param | Tipe | Required | Keterangan |
-|---|---|---|---|
-| `from` | string `YYYY-MM-DD` | ya | Tanggal awal (inklusif). |
-| `to` | string `YYYY-MM-DD` | ya | Tanggal akhir (inklusif). |
+| Param  | Tipe                | Required | Keterangan                |
+| ------ | ------------------- | -------- | ------------------------- |
+| `from` | string `YYYY-MM-DD` | ya       | Tanggal awal (inklusif).  |
+| `to`   | string `YYYY-MM-DD` | ya       | Tanggal akhir (inklusif). |
 
 Aturan data:
 
@@ -155,7 +156,7 @@ Aturan data:
 Contoh:
 
 ```bash
-curl "http://localhost:3001/api/flight-hours?from=2026-05-01&to=2026-05-07" \
+curl "/api/flight-hours?from=2026-05-01&to=2026-05-07" \
   -H "Authorization: Bearer <token>"
 ```
 
@@ -167,19 +168,19 @@ Ringkasan jam terbang: cards batas periode (daily/weekly/monthly/annual) dan gra
 
 Query params:
 
-| Param | Tipe | Required | Default | Keterangan |
-|---|---|---|---|---|
-| `range` | enum | tidak | `1w` | Rentang grafik: `1w`, `1m`, `3m`, `6m`, `1y`. |
+| Param   | Tipe | Required | Default | Keterangan                                    |
+| ------- | ---- | -------- | ------- | --------------------------------------------- |
+| `range` | enum | tidak    | `1w`    | Rentang grafik: `1w`, `1m`, `3m`, `6m`, `1y`. |
 
 Parameter grafik per `range` (dari `mock-flight-hours.json`):
 
 | range | windowDays | limitLine | yMax |
-|---|---|---|---|
-| 1w | 7 | 40 | 45 |
-| 1m | 30 | 100 | 125 |
-| 3m | 90 | 300 | 325 |
-| 6m | 180 | 600 | 625 |
-| 1y | 365 | 1050 | 1200 |
+| ----- | ---------- | --------- | ---- |
+| 1w    | 7          | 40        | 45   |
+| 1m    | 30         | 100       | 125  |
+| 3m    | 90         | 300       | 325  |
+| 6m    | 180        | 600       | 625  |
+| 1y    | 365        | 1050      | 1200 |
 
 Aturan data:
 
@@ -193,10 +194,10 @@ Aturan data:
   "statusCode": 200,
   "data": {
     "cards": {
-      "daily":   { "current": 6.4,    "limit": 8 },
-      "weekly":  { "current": 25.2,   "limit": 40 },
-      "monthly": { "current": 87.2,   "limit": 100 },
-      "annual":  { "current": 1013.8, "limit": 1050 }
+      "daily": { "current": 6.4, "limit": 8 },
+      "weekly": { "current": 25.2, "limit": 40 },
+      "monthly": { "current": 87.2, "limit": 100 },
+      "annual": { "current": 1013.8, "limit": 1050 }
     },
     "chart": {
       "range": "1w",
@@ -229,10 +230,10 @@ Contoh:
 
 ```bash
 # default 1w
-curl "http://localhost:3001/api/flight-hours/summary" -H "Authorization: Bearer <token>"
+curl "/api/flight-hours/summary" -H "Authorization: Bearer <token>"
 
 # eksplisit bulanan
-curl "http://localhost:3001/api/flight-hours/summary?range=1m" -H "Authorization: Bearer <token>"
+curl "/api/flight-hours/summary?range=1m" -H "Authorization: Bearer <token>"
 ```
 
 ---
@@ -243,11 +244,11 @@ Daftar dokumen pilot + badge urgensi. Tanpa parameter.
 
 Aturan badge (sisa hari terhadap anchor `2026-05-15`):
 
-| daysRemaining | status | badgeColor |
-|---|---|---|
-| `<= 0` | `expired` | `#E63757` |
-| `0 < x <= 30` | `soon` | `#F59E0B` |
-| `> 30` | `safe` | `#1FBF8F` |
+| daysRemaining | status    | badgeColor |
+| ------------- | --------- | ---------- |
+| `<= 0`        | `expired` | `#E63757`  |
+| `0 < x <= 30` | `soon`    | `#F59E0B`  |
+| `> 30`        | `safe`    | `#1FBF8F`  |
 
 **Sukses `200`:**
 
@@ -293,10 +294,10 @@ Jadwal duty bulanan beserta legend. Output berisi seluruh entri `duty_date` pada
 
 Query params:
 
-| Param | Tipe | Required | Keterangan |
-|---|---|---|---|
-| `year` | int / string `YYYY` | ya | Tahun. |
-| `month` | int / string `MM` | ya | Bulan 1-12. |
+| Param   | Tipe                | Required | Keterangan  |
+| ------- | ------------------- | -------- | ----------- |
+| `year`  | int / string `YYYY` | ya       | Tahun.      |
+| `month` | int / string `MM`   | ya       | Bulan 1-12. |
 
 Aturan data:
 
@@ -357,7 +358,10 @@ Aturan data:
 ```json
 {
   "statusCode": 400,
-  "message": ["year must be an integer number", "month must be an integer number"],
+  "message": [
+    "year must be an integer number",
+    "month must be an integer number"
+  ],
   "error": "Bad Request"
 }
 ```
@@ -365,17 +369,17 @@ Aturan data:
 Contoh:
 
 ```bash
-curl "http://localhost:3001/api/schedules?year=2026&month=05" -H "Authorization: Bearer <token>"
+curl "/api/schedules?year=2026&month=05" -H "Authorization: Bearer <token>"
 ```
 
 ## 4. Format Error Umum
 
-| Status | Kapan | Body |
-|---|---|---|
-| `400` | Validasi gagal (body/query hilang, tipe salah, prop ekstra) | `{ statusCode, message: string[] , error: "Bad Request" }` |
-| `401` | Tanpa token / token invalid / kredensial login salah | `{ statusCode, message, error: "Unauthorized" }` |
-| `404` | Route tidak dikenal (mis. `GET /`) | Plain 404, tanpa body JSON |
-| `500` | Error tak tertangani | `{ statusCode: 500, message: "Internal server error", error: "Internal Server Error" }` |
+| Status | Kapan                                                       | Body                                                                                    |
+| ------ | ----------------------------------------------------------- | --------------------------------------------------------------------------------------- |
+| `400`  | Validasi gagal (body/query hilang, tipe salah, prop ekstra) | `{ statusCode, message: string[] , error: "Bad Request" }`                              |
+| `401`  | Tanpa token / token invalid / kredensial login salah        | `{ statusCode, message, error: "Unauthorized" }`                                        |
+| `404`  | Route tidak dikenal (mis. `GET /`)                          | Plain 404, tanpa body JSON                                                              |
+| `500`  | Error tak tertangani                                        | `{ statusCode: 500, message: "Internal server error", error: "Internal Server Error" }` |
 
 ## 5. Aturan Data Global
 
@@ -384,6 +388,6 @@ curl "http://localhost:3001/api/schedules?year=2026&month=05" -H "Authorization:
 - **Zeroing masa depan** — jam terbang dengan tanggal `> 2026-05-15` dihitung `0.0` (data mock hanya sampai `2026-05-31`).
 - **Rolling sum** = total jam pada rentang `[T - (windowDays - 1), T]`.
 - **Bulat 1 desimal** pada cards, `current`, `hours`, dan `sum` grafik.
-- Kredensial demo hardcoded untuk assessment: `johndoe` / `passjhondoe`.
+- Kredensial demo hardcoded untuk assessment: `johndoe` / `susiairtest`.
 
 Kontrak lengkap, acceptance criteria, dan riwayat keputusan: `docs/PRD.md`.
